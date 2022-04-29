@@ -1,0 +1,15 @@
+altgraph==0.17.2
+autopep8==1.6.0
+certifi==2021.5.30
+importlib-metadata==4.8.3
+Pillow==8.4.0
+pip==21.2.2
+pycodestyle==2.8.0
+PyQt5==5.15.6
+PyQt5-Qt5==5.15.2
+PyQt5-sip==12.9.1
+setuptools==58.0.4
+toml==0.10.2
+typing_extensions==4.1.1
+wheel==0.37.1
+zipp==3.6.0

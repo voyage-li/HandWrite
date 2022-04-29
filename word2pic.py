@@ -1,4 +1,5 @@
 
+from tkinter.messagebox import RETRY
 from PIL import ImageFont
 from PIL import Image
 from PIL import ImageDraw
@@ -8,11 +9,18 @@ import sys
 
 
 def translate(txt):
+    # 画饼 这里要支持简单 markdown
+    # to be done
     f = open(txt, 'r', encoding='utf-8')
     string = f.read()
     f.close()
-
     return string
+
+
+def get_random_num():
+    result1 = random.uniform(-3, 2)
+    result2 = random.uniform(-2, 3)
+    return (result1 + result2) / 2
 
 
 def word2pic(txt, ttf, save, font_x, bg_image, dis_x, dis_y):
@@ -20,38 +28,35 @@ def word2pic(txt, ttf, save, font_x, bg_image, dis_x, dis_y):
     img = Image.open(bg_image)
     img_wid, img_height = img.size
 
-    font_size = (img_wid-dis_x*2)//(font_x)
-    font_y = (img_height-dis_y*2)//(font_size) - 3  # 竖行字体个数计算
+    font_size = (img_wid-dis_x*2)//(font_x+1)
+    font_y = (img_height-dis_y*2)//(font_size) - 1  # 竖行字体个数计算
 
     font = ImageFont.truetype(ttf, font_size)  # 设置字体
 
     string = translate(txt)
+    length = len(string)
 
-    lenstr = len(string)
     page = 1
-    flag = 0
-    while flag < lenstr:
+    iter = 0
+    while iter < length:
         img = Image.open(bg_image)
         draw = ImageDraw.Draw(img)
         for i in range(font_y):
             for j in range(font_x):
-                if flag >= lenstr:
+                if(iter >= length):
                     break
-                if string[flag] == '\n':
-                    flag += 1
+                if string[iter] == '\n':
+                    iter += 1
                     break
-                draw.text((dis_x+(font_size)*j+random.uniform(-1.5, 1.5), dis_y+(font_size+1)*i+random.uniform(-1.5, 1.5)), string[flag], (0, 0, 0), font=font)
-                flag += 1
-            if flag >= lenstr:
-                break
-        img.save(save + str(page) + ".png")
+                draw.text((dis_x+(font_size+1)*j+get_random_num(), dis_y+(font_size+1)*i+get_random_num()), string[iter], (0, 0, 0), font=font)
+                iter += 1
+        img.save(save + str(page) + ".png", dpi=(150.0, 150.0))
         page += 1
     return page
 
 
-# if __name__ == "__main__":
-
-    # txt_path = './test.txt'
-    # ttf_path = "./src/test.TTF"
-    # save_path = "./"
-    # word2pic(txt_path, ttf_path, save_path, 40, './src/bg.png', 40, 40)
+if __name__ == "__main__":
+    txt_path = './src/test.txt'
+    ttf_path = "./src/李国夫手写体.ttf"
+    save_path = "./result/"
+    word2pic(txt_path, ttf_path, save_path, 30, './src/bg.png', 40, 20)

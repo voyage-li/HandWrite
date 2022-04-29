@@ -192,6 +192,21 @@ class Ui_MainWindow(QtWidgets.QWidget):
         self.horizontalLayout_4.addWidget(self.spinBox_2)
         spacerItem2 = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
         self.horizontalLayout_4.addItem(spacerItem2)
+        self.label_7 = QtWidgets.QLabel(self.widget_4)
+        self.label_7.setMaximumSize(QtCore.QSize(70, 16777215))
+        font = QtGui.QFont()
+        font.setFamily("Arial Black")
+        font.setBold(True)
+        font.setItalic(False)
+        font.setWeight(75)
+        self.label_7.setFont(font)
+        self.label_7.setObjectName("label_7")
+        self.horizontalLayout_4.addWidget(self.label_7)
+        self.spinBox_3 = QtWidgets.QSpinBox(self.widget_4)
+        self.spinBox_3.setObjectName("spinBox_3")
+        self.horizontalLayout_4.addWidget(self.spinBox_3)
+        spacerItem3 = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
+        self.horizontalLayout_4.addItem(spacerItem3)
         MainWindow.setCentralWidget(self.centralwidget)
         self.menubar = QtWidgets.QMenuBar(MainWindow)
         self.menubar.setGeometry(QtCore.QRect(0, 0, 435, 26))
@@ -209,7 +224,9 @@ class Ui_MainWindow(QtWidgets.QWidget):
     def run(self):
         save_path = QFileDialog.getExistingDirectory(self, 'save path', './')+'/'
         font_x = self.spinBox.value()
-        result = word2pic.word2pic(self.data_path, self.ttf_path, save_path, font_x, self.bg_path, 20, 20)
+        margin_x = self.spinBox_2.value()
+        margin_y = self.spinBox_3.value()
+        result = word2pic.word2pic(self.data_path, self.ttf_path, save_path, font_x, self.bg_path, margin_x, margin_y)
 
         pngFiles = []
         sources = []
@@ -227,7 +244,10 @@ class Ui_MainWindow(QtWidgets.QWidget):
                 pngFile = pngFile.convert("RGB")
             sources.append(pngFile)
         output.save(save_path+'out.pdf', "pdf", save_all=True, append_images=sources)
-        os.system('google-chrome '+save_path+'out.pdf')
+        if sys.platform=='linux':
+            os.system('google-chrome '+save_path+'out.pdf')
+        else:
+            os.startfile(save_path+'out.pdf')
 
     def get_txt_path(self):
         path_name, _ = QFileDialog.getOpenFileName(self, 'Open file', './', 'data files (*.txt *.md)')
@@ -292,7 +312,8 @@ class Ui_MainWindow(QtWidgets.QWidget):
         self.label_4.setText(_translate("MainWindow", "背景路径："))
         self.toolButton_3.setText(_translate("MainWindow", "..."))
         self.label_5.setText(_translate("MainWindow", "横向字数："))
-        self.label_6.setText(_translate("MainWindow", "纵向字数："))
+        self.label_6.setText(_translate("MainWindow", "横向页边:"))
+        self.label_7.setText(_translate("MainWindow", "纵向页边:"))
 
 
 if __name__ == "__main__":
