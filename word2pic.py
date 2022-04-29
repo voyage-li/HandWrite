@@ -1,7 +1,20 @@
-import random
+from mainwindow import Ui_MainWindow
+from PyQt5 import QtCore, QtGui, QtWidgets
+
 from PIL import ImageFont
 from PIL import Image
 from PIL import ImageDraw
+
+import random
+import sys
+
+
+def translate(txt):
+    f = open(txt, 'r', encoding='utf-8')
+    string = f.read()
+    f.close()
+
+    return string
 
 
 def word2pic(txt, ttf, save, font_x, bg_image, dis_x, dis_y):
@@ -14,13 +27,13 @@ def word2pic(txt, ttf, save, font_x, bg_image, dis_x, dis_y):
 
     font = ImageFont.truetype(ttf, font_size)  # 设置字体
 
-    f = open(txt, 'r', encoding='utf-8')
-    string = f.read()
-    f.close()
+    string = translate(txt)
+
     lenstr = len(string)
     page = 1
     flag = 0
     while flag < lenstr:
+        img = Image.open(bg_image)
         draw = ImageDraw.Draw(img)
         for i in range(font_y):
             for j in range(font_x):
@@ -29,7 +42,7 @@ def word2pic(txt, ttf, save, font_x, bg_image, dis_x, dis_y):
                 if string[flag] == '\n':
                     flag += 1
                     break
-                draw.text((dis_x+(font_size)*j+random.uniform(-2.4, 2.4), dis_y+(font_size+1)*i+random.uniform(-2.4, 2.4)), string[flag], (0, 0, 0), font=font)
+                draw.text((dis_x+(font_size)*j+random.uniform(-1.5, 1.5), dis_y+(font_size+1)*i+random.uniform(-1.5, 1.5)), string[flag], (0, 0, 0), font=font)
                 flag += 1
             if flag >= lenstr:
                 break
@@ -38,7 +51,14 @@ def word2pic(txt, ttf, save, font_x, bg_image, dis_x, dis_y):
 
 
 if __name__ == "__main__":
-    txt_path = './test.txt'
-    ttf_path = "./src/test.TTF"
-    save_path = "./"
-    word2pic(txt_path, ttf_path, save_path, 40, './src/bg.png', 40, 40)
+    app = QtWidgets.QApplication(sys.argv)
+    MainWindow = QtWidgets.QMainWindow()
+    ui = Ui_MainWindow()
+
+    ui.setupUi(MainWindow)
+    MainWindow.show()
+    sys.exit(app.exec_())
+    # txt_path = './test.txt'
+    # ttf_path = "./src/test.TTF"
+    # save_path = "./"
+    # word2pic(txt_path, ttf_path, save_path, 40, './src/bg.png', 40, 40)
