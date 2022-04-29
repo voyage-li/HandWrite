@@ -1,5 +1,3 @@
-from mainwindow import Ui_MainWindow
-from PyQt5 import QtCore, QtGui, QtWidgets
 
 from PIL import ImageFont
 from PIL import Image
@@ -23,7 +21,7 @@ def word2pic(txt, ttf, save, font_x, bg_image, dis_x, dis_y):
     img_wid, img_height = img.size
 
     font_size = (img_wid-dis_x*2)//(font_x)
-    font_y = (img_height-dis_y*2)//(font_size)  # 竖行字体个数计算
+    font_y = (img_height-dis_y*2)//(font_size) - 3  # 竖行字体个数计算
 
     font = ImageFont.truetype(ttf, font_size)  # 设置字体
 
@@ -48,16 +46,11 @@ def word2pic(txt, ttf, save, font_x, bg_image, dis_x, dis_y):
                 break
         img.save(save + str(page) + ".png")
         page += 1
+    return page
 
 
-if __name__ == "__main__":
-    app = QtWidgets.QApplication(sys.argv)
-    MainWindow = QtWidgets.QMainWindow()
-    ui = Ui_MainWindow()
+# if __name__ == "__main__":
 
-    ui.setupUi(MainWindow)
-    MainWindow.show()
-    sys.exit(app.exec_())
     # txt_path = './test.txt'
     # ttf_path = "./src/test.TTF"
     # save_path = "./"
