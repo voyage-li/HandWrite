@@ -232,8 +232,12 @@ class Ui_MainWindow(QtWidgets.QWidget):
         self.pushButton.clicked.connect(self.run)
 
     def run(self):
-        save = QFileDialog.getSaveFileName(self, 'save', './', 'pdf(*.pdf)')
-        save_path = re.sub(r'([^/]+).pdf', "", save[0]+'.pdf')
+        file_path = QFileDialog.getSaveFileName(self, 'save', './', 'pdf(*.pdf)')
+        if sys.platform == 'linux':
+            save = file_path[0]+'.pdf'
+        else:
+            save = file_path[0]
+        save_path = re.sub(r'([^/]+).pdf', "", save)
         self.font_x = self.spinBox.value()
         margin_x = self.spinBox_2.value()
         margin_y = self.spinBox_3.value()
@@ -257,11 +261,11 @@ class Ui_MainWindow(QtWidgets.QWidget):
             if pngFile.mode == "RGBA":
                 pngFile = pngFile.convert("RGB")
             sources.append(pngFile)
-        output.save(save[0]+'.pdf', "pdf", save_all=True, append_images=sources)
+        output.save(save, "pdf", save_all=True, append_images=sources)
         if sys.platform == 'linux':
-            os.system('google-chrome '+save[0]+'.pdf')
+            os.system('google-chrome '+save)
         else:
-            os.startfile(save[0]+'.pdf')
+            os.startfile(save)
 
     def get_txt_path(self):
         path_name, _ = QFileDialog.getOpenFileName(self, 'Open file', './', 'data files (*.txt *.md)')
