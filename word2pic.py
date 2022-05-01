@@ -1,10 +1,19 @@
-import imp
 from PIL import ImageFont
 from PIL import Image
 from PIL import ImageDraw
 
 import random
 import re
+
+text_re = [
+    r'\~\~([^\~]+)\~\~',
+    r'\*\*([^\*]+)\*\*',
+    r'\_\_([^\_]+)\_\_',
+    r'\=\=([^\=]+)\=\=',
+    r'\*([^\*]+)\*',
+    r'\_([^\_]+)\_',
+    r'\`([^\`]+)\`'
+]
 
 
 def translate(txt):
@@ -18,10 +27,16 @@ def translate(txt):
     # 有序无序在一起会很丑陋
     string = re.sub(r'[\-\+\*] (.+)[.\n]', lambda x: ' ·'+x.group(1)+'\n', string)
     string = re.sub(r'(\d.) (.+)[.\n]', lambda x: ' '+x.group(1)+x.group(2)+'\n', string)
+    # 去掉链接
+    string = re.sub(r'\[(.+)\]\((.+)\)', lambda x: x.group(1)+'('+x.group(2)+')', string)
+    # 去掉text内容
+    for iter in text_re:
+        string = re.sub(iter, lambda x: x.group(1), string)
+
     return string
 
 
-def word2pic(txt, ttf, save, font_x, bg_image, dis_x, dis_y):
+def word2pic(txt, ttf, save, font_x, bg_image, dis_x, dis_y, mess, font_ud):
     # 源文件 字体 保存路径 一行显示字体个数 背景图片 页边距横向 页边距纵向
     img = Image.open(bg_image)
     img_wid, img_height = img.size
@@ -29,7 +44,7 @@ def word2pic(txt, ttf, save, font_x, bg_image, dis_x, dis_y):
     font_size = (img_wid-dis_x*2)//(font_x)+5
     font_y = (img_height-dis_y*2)//(font_size)  # 竖行字体个数计算
 
-    font = ImageFont.truetype(ttf, font_size)  # 设置字体
+    font_basic = ImageFont.truetype(ttf, font_size)  # 设置字体
 
     string = translate(txt)
     length = len(string)
@@ -44,13 +59,16 @@ def word2pic(txt, ttf, save, font_x, bg_image, dis_x, dis_y):
         while (i + 3 * font_size) < (img_height - dis_y):
             j = 0
             while (j + 3 * font_size) < (img_wid - dis_x):
+                font = font_basic
+                if abs(random.randint(-10, 10)) > 7:
+                    font = ImageFont.truetype(ttf, font_size + random.randint(-font_ud, font_ud))
                 if(iter >= length):
                     break
                 if string[iter] == '\n':
                     iter += 1
                     break
                 if re.match('[\u4e00-\u9fa5]', f'%c' % string[iter]):
-                    draw.text((dis_x + j + random.uniform(-2, 2), dis_y + i + random.uniform(-3, 3)), string[iter], (0, 0, 0), font=font)
+                    draw.text((dis_x + j + random.uniform(-mess, mess), dis_y + i + random.uniform(-mess, mess)), string[iter], (0, 0, 0), font=font)
                     j += font_size-5
                 else:
                     if j == 0 and re.match('[^a-zA-Z0-9]', f'%c' % string[iter]):
@@ -72,7 +90,7 @@ def word2pic(txt, ttf, save, font_x, bg_image, dis_x, dis_y):
 
 
 if __name__ == "__main__":
-    txt_path = './src/test.txt'
+    txt_path = './src/test.md'
     ttf_path = "./src/AiDeMuGuangWuSuoBuZai-2.ttf"
     save_path = "./"
-    word2pic(txt_path, ttf_path, save_path, 35, './src/bg.png', 80, 80)
+    word2pic(txt_path, ttf_path, save_path, 40, './src/bg.png', 80, 80, 3, 1)

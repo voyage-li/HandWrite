@@ -21,3 +21,14 @@
 Hello world my name is buzhidao i like buzhidao i do not know what thing to do in the future is dangerous so dangerous take away my money
 
 ##### 文章测试
+
+下面获得一条[链接](home.ustc.edu.cn)
+
+*斜体1*
+_斜体2_
+**加粗1**
+__加粗2__
+~~删除线~~
+~~__*叠buff1*__~~
+***`叠buff2`***
+~~*__叠buff3__*~~

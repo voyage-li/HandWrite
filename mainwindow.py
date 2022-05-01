@@ -114,7 +114,7 @@ class Ui_MainWindow(QtWidgets.QWidget):
         self.label_3.setAlignment(QtCore.Qt.AlignCenter)
         self.label_3.setObjectName("label_3")
         self.pushButton = QtWidgets.QPushButton(self.centralwidget)
-        self.pushButton.setGeometry(QtCore.QRect(170, 230, 93, 28))
+        self.pushButton.setGeometry(QtCore.QRect(310, 230, 93, 28))
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Fixed, QtWidgets.QSizePolicy.Fixed)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
@@ -209,6 +209,42 @@ class Ui_MainWindow(QtWidgets.QWidget):
         self.horizontalLayout_4.addWidget(self.spinBox_3)
         spacerItem3 = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
         self.horizontalLayout_4.addItem(spacerItem3)
+        self.widget_5 = QtWidgets.QWidget(self.centralwidget)
+        self.widget_5.setGeometry(QtCore.QRect(20, 230, 261, 21))
+        self.widget_5.setObjectName("widget_5")
+        self.horizontalLayout_5 = QtWidgets.QHBoxLayout(self.widget_5)
+        self.horizontalLayout_5.setContentsMargins(0, 0, 0, 0)
+        self.horizontalLayout_5.setObjectName("horizontalLayout_5")
+        spacerItem4 = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
+        self.horizontalLayout_5.addItem(spacerItem4)
+        self.label_8 = QtWidgets.QLabel(self.widget_5)
+        self.label_8.setMaximumSize(QtCore.QSize(70, 16777215))
+        font = QtGui.QFont()
+        font.setFamily("Arial Black")
+        font.setBold(True)
+        font.setItalic(False)
+        font.setWeight(75)
+        self.label_8.setFont(font)
+        self.label_8.setObjectName("label_8")
+        self.horizontalLayout_5.addWidget(self.label_8)
+        self.spinBox_4 = QtWidgets.QSpinBox(self.widget_5)
+        self.spinBox_4.setObjectName("spinBox_4")
+        self.horizontalLayout_5.addWidget(self.spinBox_4)
+        spacerItem5 = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
+        self.horizontalLayout_5.addItem(spacerItem5)
+        self.label_9 = QtWidgets.QLabel(self.widget_5)
+        self.label_9.setMaximumSize(QtCore.QSize(70, 16777215))
+        font = QtGui.QFont()
+        font.setFamily("Arial Black")
+        font.setBold(True)
+        font.setItalic(False)
+        font.setWeight(75)
+        self.label_9.setFont(font)
+        self.label_9.setObjectName("label_9")
+        self.horizontalLayout_5.addWidget(self.label_9)
+        self.spinBox_5 = QtWidgets.QSpinBox(self.widget_5)
+        self.spinBox_5.setObjectName("spinBox_5")
+        self.horizontalLayout_5.addWidget(self.spinBox_5)
         MainWindow.setCentralWidget(self.centralwidget)
         self.menubar = QtWidgets.QMenuBar(MainWindow)
         self.menubar.setGeometry(QtCore.QRect(0, 0, 435, 26))
@@ -221,6 +257,8 @@ class Ui_MainWindow(QtWidgets.QWidget):
         self.spinBox.setValue(35)
         self.spinBox_2.setValue(50)
         self.spinBox_3.setValue(50)
+        self.spinBox_4.setValue(3)
+        self.spinBox_5.setValue(1)
 
         # MainWindow.setWindowFlags(QtCore.Qt.WindowMinimizeButtonHint)
         # MainWindow.setFixedSize(MainWindow.width(), MainWindow.height())
@@ -241,10 +279,12 @@ class Ui_MainWindow(QtWidgets.QWidget):
         self.font_x = self.spinBox.value()
         margin_x = self.spinBox_2.value()
         margin_y = self.spinBox_3.value()
+        mess = self.spinBox_4.value()
+        font_ud = self.spinBox_5.value()
         if len(save) == 0 or len(self.data_path) == 0 or self.font_x == 0 or len(self.bg_path) == 0 or margin_x == 0 or margin_y == 0:
             return
 
-        result = word2pic.word2pic(self.data_path, self.ttf_path, save_path, self.font_x, self.bg_path, margin_x, margin_y)
+        result = word2pic.word2pic(self.data_path, self.ttf_path, save_path, self.font_x, self.bg_path, margin_x, margin_y, mess, font_ud)
 
         pngFiles = []
         sources = []
@@ -301,7 +341,6 @@ class Ui_MainWindow(QtWidgets.QWidget):
         img = self.draw_head_pic(path_name)
         pix = ImageQt.toqpixmap(img)
         self.label_3.setPixmap(pix)
-        # self.label_3.setStyleSheet("border: 2px solid red")
         self.label_3.setScaledContents(True)  # 自适应QLabel大小
 
     def get_ttf_path(self):
@@ -320,12 +359,6 @@ class Ui_MainWindow(QtWidgets.QWidget):
         else:
             count = now + 1
         self.comboBox_2.setCurrentIndex(count-1)
-        # path_name = self.comboBox_2.currentText()
-        # img = self.draw_head_pic(path_name)
-        # pix = ImageQt.toqpixmap(img)
-        # self.label_3.setPixmap(pix)
-        # # self.label_3.setStyleSheet("border: 2px solid red")
-        # self.label_3.setScaledContents(True)  # 自适应QLabel大小
 
     def get_bg_path(self):
         path_name, _ = QFileDialog.getOpenFileName(self, 'Open file', './', 'Image files (*.jpg *.gif *.png *.jpeg)')
@@ -358,6 +391,8 @@ class Ui_MainWindow(QtWidgets.QWidget):
         self.label_5.setText(_translate("MainWindow", "横向字数："))
         self.label_6.setText(_translate("MainWindow", "横向页边:"))
         self.label_7.setText(_translate("MainWindow", "纵向页边:"))
+        self.label_8.setText(_translate("MainWindow", "混乱程度："))
+        self.label_9.setText(_translate("MainWindow", "大小浮动:"))
 
 
 if __name__ == "__main__":
