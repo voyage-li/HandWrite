@@ -1,8 +1,10 @@
+import imp
 from PIL import ImageFont
 from PIL import Image
 from PIL import ImageDraw
 
 import random
+import re
 
 
 def translate(txt):
@@ -32,22 +34,33 @@ def word2pic(txt, ttf, save, font_x, bg_image, dis_x, dis_y):
     while iter < length:
         img = Image.open(bg_image)
         draw = ImageDraw.Draw(img)
-        for i in range(font_y):
-            for j in range(font_x):
+        i = 0
+        while i+1.5*font_size < img_height-dis_y:
+            j = 0
+            while j + 1.5*font_size < img_wid-dis_x:
                 if(iter >= length):
                     break
                 if string[iter] == '\n':
                     iter += 1
                     break
-                draw.text((dis_x+(font_size-7)*j+random.uniform(-3, 3), dis_y+(font_size)*i+random.uniform(-3, 3)), string[iter], (0, 0, 0), font=font)
+                if re.match('[\u4e00-\u9fa5]', f'%c' % string[iter]):
+                    draw.text((dis_x+j+random.uniform(-3, 3), dis_y + i + random.uniform(-3, 3)), string[iter], (0, 0, 0), font=font)
+                    j += font_size-7
+                else:
+                    draw.text((dis_x+j, dis_y + i), string[iter], (0, 0, 0), font=font)
+                    if re.match('[a-zA-Z0-9]', f'%c' % string[iter]):
+                        j += (font_size-7)/2.5
+                    else:
+                        j += (font_size-7)//2
                 iter += 1
+            i += font_size+1
         img.save(save + str(page) + ".png", dpi=(150.0, 150.0))
         page += 1
     return page
 
 
 if __name__ == "__main__":
-    txt_path = './src/test.txt'
-    ttf_path = "./src/XinYeNianTi-2.otf"
+    txt_path = './src/test.md'
+    ttf_path = "./src/AiDeMuGuangWuSuoBuZai-2.ttf"
     save_path = "./result/"
-    word2pic(txt_path, ttf_path, save_path, 30, './src/bg.png', 40, 20)
+    word2pic(txt_path, ttf_path, save_path, 30, './src/bg.png', 40, 40)
