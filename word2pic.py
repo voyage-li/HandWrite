@@ -26,7 +26,7 @@ def word2pic(txt, ttf, save, font_x, bg_image, dis_x, dis_y):
     img = Image.open(bg_image)
     img_wid, img_height = img.size
 
-    font_size = (img_wid-dis_x*2)//(font_x)+7
+    font_size = (img_wid-dis_x*2)//(font_x)+5
     font_y = (img_height-dis_y*2)//(font_size)  # 竖行字体个数计算
 
     font = ImageFont.truetype(ttf, font_size)  # 设置字体
@@ -41,9 +41,9 @@ def word2pic(txt, ttf, save, font_x, bg_image, dis_x, dis_y):
         img = Image.open(bg_image)
         draw = ImageDraw.Draw(img)
         i = 0
-        while i+1.5*font_size < img_height-dis_y:
+        while (i + 3 * font_size) < (img_height - dis_y):
             j = 0
-            while j + 1.5*font_size < img_wid-dis_x:
+            while (j + 3 * font_size) < (img_wid - dis_x):
                 if(iter >= length):
                     break
                 if string[iter] == '\n':
@@ -72,7 +72,7 @@ def word2pic(txt, ttf, save, font_x, bg_image, dis_x, dis_y):
 
 
 if __name__ == "__main__":
-    txt_path = './src/test.md'
+    txt_path = './src/test.txt'
     ttf_path = "./src/AiDeMuGuangWuSuoBuZai-2.ttf"
-    save_path = "./result/"
-    word2pic(txt_path, ttf_path, save_path, 30, './src/bg.png', 40, 40)
+    save_path = "./"
+    word2pic(txt_path, ttf_path, save_path, 35, './src/bg.png', 80, 80)
