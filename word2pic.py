@@ -13,6 +13,11 @@ def translate(txt):
     f = open(txt, 'r', encoding='utf-8')
     string = f.read()
     f.close()
+    # 直接去掉所有有标题的内容
+    string = re.sub(r'(#+) (.+)[.\n]', lambda x: x.group(2)+'\n', string)
+    # 有序无序在一起会很丑陋
+    string = re.sub(r'[\-\+\*] (.+)[.\n]', lambda x: ' ·'+x.group(1)+'\n', string)
+    string = re.sub(r'(\d.) (.+)[.\n]', lambda x: ' '+x.group(1)+x.group(2)+'\n', string)
     return string
 
 
@@ -31,6 +36,7 @@ def word2pic(txt, ttf, save, font_x, bg_image, dis_x, dis_y):
 
     page = 1
     iter = 0
+    last_j = 0
     while iter < length:
         img = Image.open(bg_image)
         draw = ImageDraw.Draw(img)
@@ -44,16 +50,22 @@ def word2pic(txt, ttf, save, font_x, bg_image, dis_x, dis_y):
                     iter += 1
                     break
                 if re.match('[\u4e00-\u9fa5]', f'%c' % string[iter]):
-                    draw.text((dis_x+j+random.uniform(-3, 3), dis_y + i + random.uniform(-3, 3)), string[iter], (0, 0, 0), font=font)
-                    j += font_size-7
+                    draw.text((dis_x + j + random.uniform(-2, 2), dis_y + i + random.uniform(-3, 3)), string[iter], (0, 0, 0), font=font)
+                    j += font_size-5
                 else:
-                    draw.text((dis_x+j, dis_y + i), string[iter], (0, 0, 0), font=font)
-                    if re.match('[a-zA-Z0-9]', f'%c' % string[iter]):
-                        j += (font_size-7)/2.5
+                    if j == 0 and re.match('[^a-zA-Z0-9]', f'%c' % string[iter]):
+                        draw.text((dis_x+last_j, dis_y + i-font_size-7), string[iter], (0, 0, 0), font=font)
                     else:
+                        draw.text((dis_x+j, dis_y + i), string[iter], (0, 0, 0), font=font)
+                    if re.match('[a-zA-Z]', f'%c' % string[iter]):
+                        j += (font_size-7)/2.5
+                    elif re.match('[0-9]', f'%c' % string[iter]):
                         j += (font_size-7)//2
+                    else:
+                        j += (font_size-7)//3
                 iter += 1
-            i += font_size+1
+                last_j = j
+            i += font_size + 7
         img.save(save + str(page) + ".png", dpi=(150.0, 150.0))
         page += 1
     return page
