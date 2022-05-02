@@ -16,17 +16,63 @@ text_re = [
 ]
 
 
+def list_sub_2(x):
+    ans = '\n    '
+    ans += '('+x.group(1)+')'+' '+x.group(2)
+    return ans
+
+
+def list_sub_3(x):
+    ans = '\n        '
+    iter = eval(x.group(1))
+    if iter == 1:
+        ans += '①'
+    elif iter == 2:
+        ans += '②'
+    elif iter == 3:
+        ans += '③'
+    elif iter == 4:
+        ans += '④'
+    elif iter == 5:
+        ans += '⑤'
+    elif iter == 6:
+        ans += '⑥'
+    elif iter == 7:
+        ans += '⑦'
+    elif iter == 8:
+        ans += '⑧'
+    elif iter == 9:
+        ans += '⑨'
+    ans += '  '+x.group(2)
+    return ans
+
+
+def list_sub_4(x):
+    ans = '\n            #'
+    iter = eval(x.group(1))
+    ans = ans.replace('#', chr(iter-1+ord('a')))
+    ans += ') '+x.group(2)
+    return ans
+
+
 def translate(txt):
     # 画饼 这里要支持简单 markdown
     # to be done
     f = open(txt, 'r', encoding='utf-8')
     string = f.read()
     f.close()
+    if '.txt' in txt:
+        return string
     # 直接去掉所有有标题的内容
     string = re.sub(r'(#+) (.+)[.\n]', lambda x: x.group(2)+'\n', string)
     # 有序无序在一起会很丑陋
-    string = re.sub(r'[\-\+\*] (.+)[.\n]', lambda x: ' ·'+x.group(1)+'\n', string)
-    string = re.sub(r'(\d.) (.+)[.\n]', lambda x: ' '+x.group(1)+x.group(2)+'\n', string)
+    string = re.sub(r'[.\n][\-\+\*] (.+)', lambda x: '\n'+' ● ' + x.group(1), string)
+    string = re.sub(r'[.\n][\ ]{4}[\-\+\*] (.+)', lambda x: '\n    '+' ○ ' + x.group(1), string)
+    string = re.sub(r'[.\n][\ ]{8}[\-\+\*] (.+)', lambda x: '\n        '+' ■ ' + x.group(1), string)
+    string = re.sub(r'[.\n](\d.) (.+)', lambda x: '\n '+x.group(1)+x.group(2), string)
+    string = re.sub(r'[.\n][\ ]{4}(\d). (.+)', list_sub_2, string)
+    string = re.sub(r'[.\n][\ ]{8}(\d). (.+)', list_sub_3, string)
+    string = re.sub(r'[.\n][\ ]{12}(\d). (.+)', list_sub_4, string)
     # 去掉链接
     string = re.sub(r'\[(.+)\]\((.+)\)', lambda x: x.group(1)+'('+x.group(2)+')', string)
     # 去掉text内容
@@ -68,13 +114,16 @@ def word2pic(txt, ttf, save, font_x, bg_image, dis_x, dis_y, mess, font_ud):
                     iter += 1
                     break
                 if re.match('[\u4e00-\u9fa5]', f'%c' % string[iter]):
-                    draw.text((dis_x + j + random.uniform(-mess, mess), dis_y + i + random.uniform(-mess, mess)), string[iter], (0, 0, 0), font=font)
+                    draw.text((dis_x + j + random.uniform(-mess, mess), dis_y + i + random.uniform(-mess, mess)), string[iter], (0, 0, 0), font)
                     j += font_size-5
                 else:
-                    if j == 0 and re.match('[^a-zA-Z0-9]', f'%c' % string[iter]):
-                        draw.text((dis_x+last_j, dis_y + i-font_size-7), string[iter], (0, 0, 0), font=font)
+                    if i != 0 and j == 0 and re.match('[\.\。\,\，\:\：\!\！\?\？\”\;\；\]\}\)]', f'%c' % string[iter]):
+                        draw.text((dis_x+last_j, dis_y + i-font_size-7), string[iter], (0, 0, 0), font)
                     else:
-                        draw.text((dis_x+j, dis_y + i), string[iter], (0, 0, 0), font=font)
+                        if string[iter] == '○' or string[iter] == '●' or string[iter] == '■':
+                            draw.text((dis_x + j, dis_y + i + font_size//2), string[iter], (0, 0, 0), ImageFont.truetype(ttf, font_size//3))
+                        else:
+                            draw.text((dis_x + j, dis_y + i), string[iter], (0, 0, 0), font)
                     if re.match('[a-zA-Z]', f'%c' % string[iter]):
                         j += (font_size-7)/2.5
                     elif re.match('[0-9]', f'%c' % string[iter]):
@@ -93,4 +142,4 @@ if __name__ == "__main__":
     txt_path = './src/test.md'
     ttf_path = "./src/AiDeMuGuangWuSuoBuZai-2.ttf"
     save_path = "./"
-    word2pic(txt_path, ttf_path, save_path, 40, './src/bg.png', 80, 80, 3, 1)
+    word2pic(txt_path, ttf_path, save_path, 40, './src/bg.png', 80, 80, 2, 1)
