@@ -255,8 +255,8 @@ class Ui_MainWindow(QtWidgets.QWidget):
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
 
         self.spinBox.setValue(35)
-        self.spinBox_2.setValue(50)
-        self.spinBox_3.setValue(50)
+        self.spinBox_2.setValue(60)
+        self.spinBox_3.setValue(60)
         self.spinBox_4.setValue(3)
         self.spinBox_5.setValue(1)
 
